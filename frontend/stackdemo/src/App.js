@@ -4,8 +4,25 @@ function App() {
 
 	const [greeting, setGreeting] = useState("Greet Someone!");
 
+	const [prevGreetings, setPrevGreetings] = useState([]);
+
 	const greetingName = useRef();
 	const greetingLanguage = useRef();
+
+
+	useEffect(() => {	
+		const reqOpt = {
+			method: 'get',
+			headers: { 'Content-Type': 'application/json' },
+		};
+
+		fetch('http://localhost:1337/getGreetings', reqOpt)
+			.then(response => response.json())
+			.then(data => {
+				setPrevGreetings(data)
+				console.log(data)
+				});
+	}, [greeting]);
 
 	function greetSomeone(event) {
 		event.preventDefault();
@@ -42,6 +59,13 @@ function App() {
 				</select>
 				<input ref={greetingName} />
 				<input type="submit" value="Greet" />
+				<br/>
+				Previous Greeting Count: <b>{prevGreetings.Count}</b>
+				<br/>
+				{(prevGreetings.Greetings != null)?
+				prevGreetings.Greetings.map(g => (<li>{g.Message}</li>)):""
+				}
+				
 			</form>
 		</div>
 	);
